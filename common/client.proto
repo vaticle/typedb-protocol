@@ -18,36 +18,38 @@
 syntax = "proto3";
 
 option java_package = "com.vaticle.typedb.protocol";
-option java_outer_classname = "OptionsProto";
+option java_outer_classname = "ClientProto";
+
+import "common/options.proto";
 
 package typedb.protocol;
 
-// TODO: Replace 'oneof' with 'optional' when upgraded to Protobuf 3.13 everywhere
-// https://github.com/protocolbuffers/protobuf/issues/1606#issuecomment-618687169
+message Client {
 
-message Options {
-    oneof infer_opt {
-        bool infer = 1;
+    message Open {
+        message Req {
+            oneof idle_timeout_opt {
+                int32 idle_timeout_millis = 1;
+            }
+        }
+        message Res {
+            bytes client_id = 1;
+        }
     }
-    oneof trace_inference_opt {
-        bool trace_inference = 2;
+
+    message Close {
+        message Req {
+            bytes client_id = 1;
+        }
+        message Res {}
     }
-    oneof explain_opt {
-        bool explain = 3;
-    }
-    oneof parallel_opt {
-        bool parallel = 4;
-    }
-    oneof prefetch_size_opt {
-        int32 prefetch_size = 5;
-    }
-    oneof prefetch_opt {
-        bool prefetch = 6;
-    }
-    oneof schema_lock_acquire_timeout_opt {
-        int32 schema_lock_acquire_timeout_millis = 7;
-    }
-    oneof read_any_replica_opt {
-        bool read_any_replica = 8;
+
+    message Pulse {
+        message Req {
+            bytes client_id = 1;
+        }
+        message Res {
+            bool alive = 1;
+        }
     }
 }
